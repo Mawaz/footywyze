@@ -1,0 +1,51 @@
+# Ignore Python virtual environments
+venv/
+env/
+*.pyc
+__pycache__/
+
+# Ignore sensitive information (credentials, API keys)
+config/secrets/
+.env
+
+# Ignore log and cache files
+*.log
+__pycache__/
+.cache/
+
+# Ignore data files with sensitive or large data
+data/raw/
+data/processed/
+data/*.zip
+data/*.csv
+
+# Ignore Jupyter Notebook checkpoints and outputs
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+*.ipynb-meta
+*.ipynb-*
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+*.iml
+*.pydevproject
+
+# Ignore generated or compiled files
+*.egg-info/
+dist/
+build/
+bin/
+*.log
+*.swp
+*.swo
+
+# Ignore system and temporary files
+ehthumbs.db
+Thumbs.db
+
+# Ignore project-specific files and directories
+__project_specific_file_or_directory_name__/
