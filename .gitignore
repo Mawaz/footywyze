@@ -49,3 +49,7 @@ Thumbs.db
 
 # Ignore project-specific files and directories
 __project_specific_file_or_directory_name__/
+
+# Ignore Other Files
+src/main_test.py
+toDoList.txt

@@ -4,35 +4,28 @@ import pandas as pd
 from dotenv import load_dotenv
 import os
 import json
+from flask import Flask, request
 
 # Load environment variables from a .env file
 load_dotenv()
 
-# Function to authenticate and fetch data from the API
-def fetch_data(api_key, api_host, api_url, query):
+# Class to authenticate and fetch data from the API
+class APIClient:
+    def __init__(self, api_key, api_host):
+        self.api_key = api_key
+        self.api_host = api_host
+        self.headers = {
+            "X-RapidAPI-Key": self.api_key,
+            "X-RapidAPI-Host": self.api_host
+        }
 
-    url = api_url
-
-    querystring = query
-
-    headers = {
-	"X-RapidAPI-Key": api_key,
-	"X-RapidAPI-Host": api_host
-    }
-    print("URL: ", url)
-    print("Request Headers: ", headers)
-
-    response = requests.get(url, headers=headers, params = querystring)
-
-    #api_url = "https://api.football-data.org/v2/your-endpoint"  # Replace with your actual API endpoint
-    #headers = {"X-Auth-Token": api_key}
-    #response = requests.get(api_url, headers=headers)
-
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Failed to fetch data. Status code: {response.status_code}")
-        return None
+    def fetch_data(self, api_url, query):
+        response = requests.get(api_url, headers=self.headers, params=query)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Failed to fetch data. Status code: {response.status_code}")
+            return None
 
 # Function to save data to a local file (data/raw/)
 def save_data_to_file(data, filename):
@@ -61,22 +54,26 @@ def main():
     print("Started Main")
     api_key = os.getenv("X-RapidAPI-Key")
     api_host = os.getenv("X-RapidAPI-Host") 
-    api_url = os.getenv("X-RapidAPI-PlayersURL") 
+    player_api_url = os.getenv("X-RapidAPI-Players-URL") 
     print("Fetched Env")
     if not api_key:
         raise ValueError("API key not found. Please set X-RapidAPI-Key in your environment.")
-    
-    print("Fetching Data")
 
-    player_query = {"id":"276","season":"2020"}
+    client = APIClient(api_key, api_host)
 
-    # Step 2: Data Retrieval
-    raw_data = fetch_data(api_key, api_host, api_url, player_query)
+    # Fetch and process data
+    def data_fetch(client, data_type, query):
+        print(f"Fetching {data_type} Data")
+        api_url = os.getenv(f"X-RapidAPI-{data_type}-URL")
+        data = client.fetch_data(api_url, query)
+        return data
+    fetched_data = data_fetch(client, 'Players', {"id":"276","season":"2020"})
+    process_data(fetched_data)
 
-    if raw_data:
+    if fetched_data:
         # Print the results of the fetch_data function
         print("Results of fetch_data:")
-        print(json.dumps(raw_data, indent=2))
+        print(json.dumps(fetched_data, indent=2))
 
     #if raw_data:
         # Step 3: Data Storage
